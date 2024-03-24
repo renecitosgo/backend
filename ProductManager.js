@@ -1,11 +1,15 @@
+const fs = require('fs').promises
+
 class ProductManager {
-    constructor(){
+    constructor(path){
         this.products = []
         this.id = 0
+        this.path = path
     }
 
     getProducts () {
         return this.products
+
     }
 
     getProductById (id) {
@@ -22,48 +26,58 @@ class ProductManager {
             throw new Error ("Ya existe un producto con este mismo código 🤗")
         }
         this.products.push({ id: this.id++, title, description, price, thumbnail, code, stock })
-    }    
+    }  
+    deleteProductById (id) {
+        const index = this.products.findIndex(product => product.id === id)
+        if (index === -1){
+            throw new Error ("No se encontró un producto con este ID 🤔")
+        }
+        this.products.splice(index, 1);
+        this.saveProducts();
+    }
+
+    updateProductById (id, newProduct) {
+        const index = this.products.findIndex(product => product.id === id)
+        if (index === -1){
+            throw new Error ("No se encontró un producto con este ID 🤔")
+        }
+        this.products[index] = {...this.products[index], ...newProduct};
+        this.saveProducts();
+    }  
+
+    async saveProducts(){
+        try{
+            await fs.writeFile(this.path, JSON.stringify(this.products))
+        } catch(error) {console.error ("Error al guardar los productos")
+        }
+    }
+    async loadProducts() {
+        try {
+            const data = await fs.readFile(this.path, 'utf8');
+            this.products = JSON.parse(data);
+            this.id = this.products.length;
+        } catch (error) {
+            console.error(`Error al cargar los productos: ${error}`);
+        }
+    }
+
+
 }
 
 const nuevaInstancia1 = new ProductManager()
 const nuevaInstancia2 = new ProductManager()
 
 
+
 nuevaInstancia1.addProducts("Producto de prueba1", "Este es un producto de prueba1", 200, "sin Imagen1", "abc123", 25) 
 
 nuevaInstancia1.addProducts("Producto de prueba2", "Este es un producto de prueba2", 201, "sin Imagen2", "abc124", 26)
 
+await nuevaInstancia1.saveProducts()
+
+
+
+
 nuevaInstancia2.addProducts("Producto de pruebaINST2", "Este es un producto de pruebaINST2", 201, "sin Imagen2INST2", "abc123", 26)
 
-
-
-try {
-    console.log(nuevaInstancia1.getProductById(0)) // Imprime mi producto
-} catch (error) {
-    console.error('Error atrapado:', error.message)
-}
-
-try {
-    console.log(nuevaInstancia1.getProductById(1)) // Imprime mi producto2 de instancia1 con Id1 ya que ahora existe el Id1 por que fué generado automaticamente (con id: this.id++)
-} catch (error) {
-    console.error('Error atrapado:', error.message)
-}
-
-try {
-    console.log(nuevaInstancia1.getProductById(2)) // Lanza un error por que no se encontró el Id2
-} catch (error) {
-    console.error('Error atrapado:', error.message)
-}
-
-try {
-    nuevaInstancia1.addProducts("Producto de prueba", "Este es un producto de prueba", 200, "sin Imagen", "abc123", 25) // me envía al catch por intentar agregar en instancia1 un code existente.
-} catch (error) {
-    console.error("Error atrapado:", error.message) // Lanza un error por que intento agregar en la misma instancia, un producto con el "code" ya existente. Por lo tanto el message: "Ya existe un producto con este mismo código 🤗"
-}
-
-
-
-console.log(nuevaInstancia1.getProducts()) //estpy mostrando mis 2 productos en una instancia
-console.log(nuevaInstancia2.getProducts()) // estoy mostrando mi único producto en OTRA instancia
-
-// esto debería se de mi rama 2doEntregable y no de main
+await nuevaInstancia2.saveProducts()
