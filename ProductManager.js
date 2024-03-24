@@ -65,3 +65,5 @@ try {
 
 console.log(nuevaInstancia1.getProducts()) //estpy mostrando mis 2 productos en una instancia
 console.log(nuevaInstancia2.getProducts()) // estoy mostrando mi único producto en OTRA instancia
+
+// esto debería se de mi rama 2doentregable y no de main
