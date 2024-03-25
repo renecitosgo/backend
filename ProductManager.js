@@ -30,20 +30,28 @@ class ProductManager {
     deleteProductById (id) {
         const index = this.products.findIndex(product => product.id === id)
         if (index === -1){
-            throw new Error ("No se encontró un producto con este ID 🤔")
+            throw new Error ("No se encontró para eliminar, un producto con este ID 🤔")
         }
         this.products.splice(index, 1)
         this.saveProducts()
     }
 
-    updateProductById (id, newProduct) {
+    updateProductById (id, newData) {
+
         const index = this.products.findIndex(product => product.id === id)
+
         if (index === -1){
             throw new Error ("No se encontró un producto con este ID 🤔")
         }
-        this.products[index] = {...this.products[index], ...newProduct}
+
+        if (newData.hasOwnProperty ("id") && newData.id !== id)
+            throw new Error ("No se permite actualizar el Id de un Producto 🌩️💔")
+
+        this.products[index] = {...this.products[index], ...newData}
         this.saveProducts()
+        
     }  
+
 
     async saveProducts(){
         try{
@@ -57,7 +65,7 @@ class ProductManager {
             this.products = JSON.parse(data)
             this.id = this.products.length
         } catch (error) {
-            console.error(`Error al cargar los productos: ${error}`)
+            console.error("Error al cargar los productos")
         }
     }
 
@@ -67,6 +75,7 @@ class ProductManager {
 const nuevaInstancia1 = new ProductManager("listaProductos1")
 const nuevaInstancia2 = new ProductManager("listaProductos2")
 
+
 nuevaInstancia1.addProducts("Producto de prueba1", "Este es un producto de prueba1", 200, "sin Imagen1", "abc123", 25) 
 
 nuevaInstancia1.addProducts("Producto de prueba2", "Este es un producto de prueba2", 201, "sin Imagen2", "abc124", 26)
@@ -75,21 +84,52 @@ nuevaInstancia1.addProducts("Producto de prueba2", "Este es un producto de prueb
 
 nuevaInstancia2.addProducts("Producto de pruebaINST2", "Este es un producto de pruebaINST2", 201, "sin Imagen2INST2", "abc123", 26)
 
+nuevaInstancia2.addProducts("Producto PARA Actualizar pruebaINST2.1", "Este es un producto de prueba PARA Actualizar INST2.1", 202, "sin Imagen2INST2.1", "abc124", 26)
 
 
-async function asincronaA () {
+let dataToUpdateTheProduct = {
+    id: 5, // (*1)
+    title: 'Producto Actualizado',
+    description: 'Producto Actualizado',
+    price: 200,
+    thumbnail: 'sin Imagen1 Actualizada',
+    code: 'abc123',
+    stock: 25
+}
+
+//(*1) Error: No se permite actualizar el Id de un Producto 🌩️💔. [Protección contra cambio de ID]
+// nuevaInstancia2.updateProductById(1, dataToUpdateTheProduct)
+
+
+
+async function asincronaDeLecturasdePrueba () {
     try {
         await nuevaInstancia1.saveProducts()
         await nuevaInstancia2.saveProducts()
 
         console.log("Productos de la instancia 1: ", nuevaInstancia1.getProducts())
         console.log("Productos de la instancia 2: ", nuevaInstancia2.getProducts())
+
+        // Prueba de funcion getProductById:
+        // console.log(nuevaInstancia1.getProductById(2))
+        // console.log(nuevaInstancia2.getProductById(1))
+
+        // Eliminación de un Producto
+        // await nuevaInstancia1.deleteProductById(1)
+        // console.log("Productos después de eliminar el producto con ID 1:");
+        // console.log(nuevaInstancia1.getProducts());
+
+        // Actualización de Producto
+        // console.log("Datos de mi producto antes de ser actualizado", nuevaInstancia2.getProductById (1))
+        // nuevaInstancia2.updateProductById(1, dataToUpdateTheProduct)
+        // console.log("Datos de mi producto actualizado", nuevaInstancia2.getProductById (1))
+
     } catch (error) {
         console.error(error)
     }
 }
 
-asincronaA () 
+asincronaDeLecturasdePrueba () 
 
 
 
