@@ -32,8 +32,8 @@ class ProductManager {
         if (index === -1){
             throw new Error ("No se encontró un producto con este ID 🤔")
         }
-        this.products.splice(index, 1);
-        this.saveProducts();
+        this.products.splice(index, 1)
+        this.saveProducts()
     }
 
     updateProductById (id, newProduct) {
@@ -41,8 +41,8 @@ class ProductManager {
         if (index === -1){
             throw new Error ("No se encontró un producto con este ID 🤔")
         }
-        this.products[index] = {...this.products[index], ...newProduct};
-        this.saveProducts();
+        this.products[index] = {...this.products[index], ...newProduct}
+        this.saveProducts()
     }  
 
     async saveProducts(){
@@ -53,31 +53,48 @@ class ProductManager {
     }
     async loadProducts() {
         try {
-            const data = await fs.readFile(this.path, 'utf8');
-            this.products = JSON.parse(data);
-            this.id = this.products.length;
+            const data = await fs.readFile(this.path, 'utf8')
+            this.products = JSON.parse(data)
+            this.id = this.products.length
         } catch (error) {
-            console.error(`Error al cargar los productos: ${error}`);
+            console.error(`Error al cargar los productos: ${error}`)
         }
     }
 
 
 }
 
-const nuevaInstancia1 = new ProductManager()
-const nuevaInstancia2 = new ProductManager()
-
-
+const nuevaInstancia1 = new ProductManager("listaProductos1")
+const nuevaInstancia2 = new ProductManager("listaProductos2")
 
 nuevaInstancia1.addProducts("Producto de prueba1", "Este es un producto de prueba1", 200, "sin Imagen1", "abc123", 25) 
 
 nuevaInstancia1.addProducts("Producto de prueba2", "Este es un producto de prueba2", 201, "sin Imagen2", "abc124", 26)
 
-await nuevaInstancia1.saveProducts()
-
-
 
 
 nuevaInstancia2.addProducts("Producto de pruebaINST2", "Este es un producto de pruebaINST2", 201, "sin Imagen2INST2", "abc123", 26)
 
-await nuevaInstancia2.saveProducts()
+
+
+async function asincronaA () {
+    try {
+        await nuevaInstancia1.saveProducts()
+        await nuevaInstancia2.saveProducts()
+
+        console.log("Productos de la instancia 1: ", nuevaInstancia1.getProducts())
+        console.log("Productos de la instancia 2: ", nuevaInstancia2.getProducts())
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+asincronaA () 
+
+
+
+
+
+
+
+
