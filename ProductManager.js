@@ -1,3 +1,11 @@
+
+
+
+
+//     --------------               EN CONSTRUCCION PROFE! 👌🤗🙂🫂         -----------------------
+
+
+
 const fs = require('fs').promises
 
 class ProductManager {
@@ -27,8 +35,10 @@ class ProductManager {
         }
         this.products.push({ id: this.id++, title, description, price, thumbnail, code, stock })
     }  
+
     deleteProductById (id) {
         const index = this.products.findIndex(product => product.id === id)
+            
         if (index === -1){
             throw new Error ("No se encontró para eliminar, un producto con este ID 🤔")
         }
@@ -39,15 +49,17 @@ class ProductManager {
     updateProductById (id, newData) {
 
         const index = this.products.findIndex(product => product.id === id)
+            
 
         if (index === -1){
             throw new Error ("No se encontró un producto con este ID 🤔")
         }
 
-        if (newData.hasOwnProperty ("id") && newData.id !== id)
+        if ( "id" in newData  && newData.id !== id )
             throw new Error ("No se permite actualizar el Id de un Producto 🌩️💔")
 
         this.products[index] = {...this.products[index], ...newData}
+        
         this.saveProducts()
         
     }  
@@ -114,8 +126,8 @@ async function asincronaDeLecturasdePrueba () {
         // console.log(nuevaInstancia1.getProductById(2))
         // console.log(nuevaInstancia2.getProductById(1))
 
-        // Eliminación de un Producto
-        // await nuevaInstancia1.deleteProductById(1)
+        // // Eliminación de un Producto
+        await nuevaInstancia1.deleteProductById(1)
         // console.log("Productos después de eliminar el producto con ID 1:");
         // console.log(nuevaInstancia1.getProducts());
 
