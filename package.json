@@ -5,13 +5,13 @@
   "main": "ProductManager.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.mjs",
+    "dev": "node --watch index.mjs"
   },
   "keywords": [],
   "author": "René Llugdar",
-  "license": "ISC",   
+  "license": "ISC",
   "dependencies": {
     "express": "^4.19.2"
   }
-  
 }
