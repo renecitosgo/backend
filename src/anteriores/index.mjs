@@ -4,12 +4,6 @@ import express from "express"
 import ProductManager from '../ProductManager.js'
 
 
-
-// PROFE ESTOY TRABAJANDO EN LA ENTREGA. YA LE ENVIO TODO!
-
-
-
-
 const app = express() 
 
 let productArray = [

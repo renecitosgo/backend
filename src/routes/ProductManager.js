@@ -1,4 +1,3 @@
-/*
 import express from "express"
 
 import fs from 'fs/promises'
@@ -98,5 +97,4 @@ class ProductManager {
 
 export default ProductManager
 
-*/
 
