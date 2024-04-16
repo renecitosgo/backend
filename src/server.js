@@ -1,5 +1,5 @@
 import express from "express" 
-import usersRouter from "./routes/users-router.js"
+// import usersRouter from "./routes/users-router.js"
 import productsRouter from "./routes/products-router.js"
 import { __dirname }  from "./utils.js"
 // import { uploader } from "./multer.js"
@@ -32,7 +32,7 @@ app.use(express.static("src/public"))
 
 // http://localhost:8080 +
 
-app.use("/api/users", usersRouter)
+// app.use("/api/users", usersRouter)
 
 app.use("/api/products", productsRouter)
 

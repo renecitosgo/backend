@@ -48,6 +48,7 @@ const productManager = new ProductManager('./data/productos.json')
             } else {
                 const { title, description, price, thumbnail, code, stock } = req.body
                 productManager.addProducts(title, description, price, thumbnail, code, stock)
+                productManager.saveProducts()
             }
             res.status(200).send({status: "success", message: "Producto(s) argerado(s) 🎆🙂"})
 
@@ -63,6 +64,7 @@ const productManager = new ProductManager('./data/productos.json')
             const { pid } = req.params
             const newData = req.body
             productManager.updateProductById(Number(pid), newData)
+            productManager.saveProducts()
             res.send({ status: "success", message: "Producto actualizado correctamente 🤗" })
         }catch (error) {
             res.status(400).send({ status: "error", message: error.message })
@@ -75,6 +77,7 @@ const productManager = new ProductManager('./data/productos.json')
         try{
             const { pid } = req.params
             productManager.deleteProductById(Number(pid))
+            productManager.saveProducts()
             res.send({status: "Succsess", message: "Producto elimidado 💔"})
         }catch(error){
             res.status(400).send({status: "error", error: error.message})

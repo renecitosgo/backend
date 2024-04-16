@@ -9,6 +9,7 @@ class ProductManager {
         this.products = []
         this.id = 0
         this.path = path
+        this.loadProducts()
     }
 
     getProducts () {
