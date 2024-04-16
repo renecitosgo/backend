@@ -25,18 +25,18 @@ class ProductManager {
         return product
     }
 
-    addProducts (title, description, price, thumbnail, code, stock) {
+    addProducts(title, description, price, thumbnails, code, stock) {
         const existingProduct = this.products.find(product => product.code === code)
-        if (existingProduct){
-            throw new Error ("Ya existe un producto con este mismo código 🤗")
+        if (existingProduct) {
+            throw new Error("Ya existe un producto con este mismo código 🤗")
         }
-        this.products.push({ id: this.id++, title, description, price, thumbnail, code, stock })
-    }  
+        this.products.push({ id: this.id++, title, description, price, thumbnails, code, stock })
+    }
 
     addMultipleProducts(productArray) { 
         productArray.forEach(product => {
-            const { title, description, price, thumbnail, code, stock } = product;
-            this.addProducts(title, description, price, thumbnail, code, stock)
+            const { title, description, price, thumbnails, code, stock } = product
+            this.addProducts(title, description, price, thumbnails, code, stock)
         })
     }
 
@@ -73,7 +73,7 @@ class ProductManager {
         try {
             await fs.access(this.path, fs.constants.W_OK) 
             await fs.writeFile(this.path, JSON.stringify(this.products))
-            console.log("Productos guardados correctamente.")
+            console.log("Productos guardados correctamente 🙂")
         } catch(error) {
             console.error("Error al guardar los productos:", error)
         }
@@ -90,7 +90,7 @@ class ProductManager {
             this.products = JSON.parse(data)
             this.id = this.products.length
         } catch (error) {
-            console.error("Error al cargar los productos")
+            console.error("Error al cargar los productos", error)
         }
     }
 }

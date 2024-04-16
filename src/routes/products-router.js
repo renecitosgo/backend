@@ -20,9 +20,8 @@ const productManager = new ProductManager('./data/productos.json')
                 return
             }
         }
-    
+        
         res.send({status: "success", payload: productsList})
-
     })
     
     
@@ -44,10 +43,16 @@ const productManager = new ProductManager('./data/productos.json')
 
         try{
             if(Array.isArray(req.body)){
+
                 productManager.addMultipleProducts(req.body)
+                
             } else {
-                const { title, description, price, thumbnail, code, stock } = req.body
-                productManager.addProducts(title, description, price, thumbnail, code, stock)
+                const { title, description, price, thumbnails, code, stock } = req.body
+
+                req.body.thumbnails = Array.isArray(thumbnails) ? thumbnails : [thumbnails]
+
+
+                productManager.addProducts(title, description, price, thumbnails, code, stock)
                 productManager.saveProducts()
             }
             res.status(200).send({status: "success", message: "Producto(s) argerado(s) 🎆🙂"})
