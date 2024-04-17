@@ -31,13 +31,16 @@ class CartManager {
     addProductToCart (cartId, productId){
         const cart = this.getCartsById(cartId)
         const product = cart.products.find(product => product.id === productId)
-
+    
         if (product){
             product.quantity++
         } else {
             cart.products.push({ id: productId, quantity: 1})
         }
+    
+        this.saveCart()
     }
+    
 
     getProductsInCart(cartId) {
         const cart = this.getCartsById(cartId)
@@ -57,24 +60,47 @@ class CartManager {
         this.saveCart()
     }
 
+    async saveCart() {
 
-    async saveCart(){
         try {
-        await fs.acces(this.path, fs.constants.W_OK)
-        await fs.writeFile(this.path, JSON.stringify(this.carts))
-        console.log ("Carrito guardado correctamente 🙂")
+            await fs.access(this.path, fs.constants.W_OK)
+            
+            const currentData = await fs.readFile(this.path, 'utf-8')
+            let cartsData = {}
+            
+            if (currentData.trim() !== '') {
+                cartsData = JSON.parse(currentData);
+                cartsData.carts[this.id] = this.carts[this.id]
+            } else {
+                cartsData.id = this.id
+                cartsData.carts = this.carts
+            }
+
+            await fs.writeFile(this.path, JSON.stringify(cartsData, 1))
+            console.log("Carrito guardado correctamente 🙂")
         } catch (error) {
-            console.error ("Error al guardar el carrito 🌩️💔", error)
+            console.error("Error al guardar el carrito 🌩️💔", error)
         }
     }
+    
 
     async loadCart(){
+        
         try{
             await fs.access(this.path, fs.constants.R_OK)
             const statsCart = await fs.stat(this.path)
             if(!statsCart.isFile()) {
                 throw new Error ("El path no corresponde a un carrito 💔🌩️")
             }
+            const data = await fs.readFile(this.path, 'utf-8')
+            if (!data.trim()) {
+                console.log("El archivo de carrito está vacío. No se cargará ningún carrito 👌")
+                return
+            }
+            const { id, carts } = JSON.parse(data)
+            this.id = id
+            this.carts = carts
+            
         }catch(error){
             console.error("Error al cargar el carrito", error)
         }
