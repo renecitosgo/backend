@@ -1,48 +1,57 @@
 import express from "express" 
 // import usersRouter from "./routes/users-router.js"
 import productsRouter from "./routes/products-router.js"
+import viewsRouter from "./routes/views-router.js"
 import cartsRouter from "./routes/routes-carts.js"
 import { __dirname }  from "./utils.js"
-// import { uploader } from "./multer.js"
+import { uploader } from "./multer.js"
+import handlebars from "express-handlebars"
+import { Server } from "socket.io"
 
 const app = express() 
 
-console.log(import.meta.url)
+const httpServer = app.listen(8080, error =>{
+    if(error)console.log(error)
+    console.log("Server escuchando en puerto 8080 llp")
+})
+
+const socketServer = new Server(httpServer)
 
 
-//para la lectura de los json 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use(express.static(__dirname + "/public"))
 
-app.use(express.static("src/public"))
-// app.use("/static", express.static(__dirname+ "/public")) // ruta virtual!!
+
+
+// express usa este motor de plantilla
+app.engine("handlebars", handlebars.engine())
+// seteamos la dirección de mis vistas
+app.set("views", __dirname+"/views")
+app.set("view engine", "handlebars")
+
 
 // para subir archivos
-// app.use("/subir-archivo", uploader.single("myFile"), (req, res)=>{
-//     if(!req.file){
-//         return res.send("No se puede subir el archivo")
-//     }
-//     res.send("Archivo subido")
-// })
+app.use("/subir-archivo", uploader.single("myFile"), (req, res)=>{
+    if(!req.file){
+        return res.send("No se puede subir el archivo")
+    }
+    res.send("Archivo subido")
+})
 
-
-// app.get("/", (req, res)=>{
-//     res.status(200).send("<h1> Hola Coders, soy el get de Server</h1>")
-// })
-
-
-// http://localhost:8080 +
+app.use("/", viewsRouter)
 
 // app.use("/api/users", usersRouter)
 
 app.use("/api/products", productsRouter)
+
 app.use("/api/carts", cartsRouter)
 
 
 
-// ------------------------------------------------------------------
-app.listen(8080, error =>{
-    if(error)console.log(error)
-    console.log("Server escuchando en puerto 8080 llp")
+
+app.use((error, req, res, next) => {
+    console.log(error)
+    res.status(500).send("Error 500 en el server")
 })
-// --------------------------------------------------------------------
+

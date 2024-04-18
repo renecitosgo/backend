@@ -9,7 +9,9 @@ class CartManager {
         this.carts = []
         this.id = 0
         this.path = path
-        this.loadCart()
+        this.loadCart().then(() => {
+            this.id = Math.max(0, ...this.carts.map(cart => cart.id)) + 1
+        })
     }
 
     getCarts(){
@@ -61,7 +63,6 @@ class CartManager {
     }
 
     async saveCart() {
-
         try {
             await fs.access(this.path, fs.constants.W_OK)
             
@@ -70,22 +71,23 @@ class CartManager {
             
             if (currentData.trim() !== '') {
                 cartsData = JSON.parse(currentData);
-                cartsData.carts[this.id] = this.carts[this.id]
+                cartsData.carts = this.carts 
             } else {
-                cartsData.id = this.id
+                cartsData.idProximo = this.id
                 cartsData.carts = this.carts
             }
-
-            await fs.writeFile(this.path, JSON.stringify(cartsData, 1))
+    
+            await fs.writeFile(this.path, JSON.stringify(cartsData, null, 2))
             console.log("Carrito guardado correctamente 🙂")
         } catch (error) {
             console.error("Error al guardar el carrito 🌩️💔", error)
         }
     }
     
+    
+    
 
     async loadCart(){
-        
         try{
             await fs.access(this.path, fs.constants.R_OK)
             const statsCart = await fs.stat(this.path)
@@ -97,14 +99,15 @@ class CartManager {
                 console.log("El archivo de carrito está vacío. No se cargará ningún carrito 👌")
                 return
             }
-            const { id, carts } = JSON.parse(data)
-            this.id = id
+            const { idProximo, carts } = JSON.parse(data)
+            this.id = Math.max(...carts.map(cart => cart.id)) + 1 
             this.carts = carts
             
         }catch(error){
             console.error("Error al cargar el carrito", error)
         }
     }
+    
 }
 
 export default CartManager
